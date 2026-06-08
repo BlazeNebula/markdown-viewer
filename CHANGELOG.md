@@ -1,6 +1,28 @@
 
 # Change Log
 
+## v5.7 - 2026-06-09
+
+### 新增
+
+- **选项界面汉化**：Origins / Settings / Compiler / Content 全部界面文本及
+  编译器选项悬浮提示已翻译为简体中文（保留技术名词原文）
+- **Content 选项默认全部开启**：autoreload / emoji / toc / mathjax / mermaid / syntax
+- **Compiler 默认开启**：xhtmlOut / breaks / footnote（markdown-it）
+
+### 修复
+
+- **Mermaid 主题同步**：切换扩展主题时 Mermaid 图表随之切换（清除 `data-processed`、
+  保存原始源码、`mermaid.initialize()` 重新初始化）
+- **Options 标签页切换**：改用 Mithril 条件渲染替代 classList 操作，修复
+  Settings 标签页无法打开的问题
+- **Mithril 选择器语法**：修正大量 `.class1 class2` 空格选择器为 `.class1.class2`，
+  涉及 m-textfield、m-switch、m-button、bs-callout 等 class 无法正确应用的问题
+- **设置页布局**：Origins 与 Settings 合并为单页显示，移除标签页切换
+- **Checkbox 对齐**：options/popup 中 switch 与标签文字改用 flex 居中对齐
+- **输入框宽度**：站点访问网址输入框和路径匹配正则输入框现在填满可用宽度
+- **高级设置图标**：m-box-add 左边框颜色恢复正常显示
+
 ## v5.6 - 2026-06-08
 
 ### 修复

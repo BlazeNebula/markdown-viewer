@@ -9,7 +9,7 @@ var Settings = () => {
 
   var state = Object.assign({}, defaults)
 
-  chrome.runtime.sendMessage({message: 'options.settings'}, (res) => {
+  chrome.runtime.sendMessage({ message: 'options.settings' }, (res) => {
     Object.assign(state, res)
     document.querySelector('body').classList.add(state.theme)
     m.redraw()
@@ -48,15 +48,15 @@ var Settings = () => {
     m('.row',
       m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
         m('span.m-label',
-          'Extension Icon'
+          '扩展图标'
         )
       ),
       m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
         m('select.mdc-elevation--z2 m-select', {
           onchange: events.icon
-          },
+        },
           state._icons.map((icon) =>
-            m('option', {selected: state.icon === icon}, icon)
+            m('option', { selected: state.icon === icon }, icon)
           )
         )
       ),
@@ -64,20 +64,20 @@ var Settings = () => {
     m('.row',
       m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
         m('span.m-label',
-          'Popup & Options Page'
+          '弹窗与选项页'
         )
       ),
       m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
         m('select.mdc-elevation--z2 m-select', {
           onchange: events.theme
-          },
+        },
           state._themes.map((theme) =>
-            m('option', {selected: state.theme === theme}, theme)
+            m('option', { selected: state.theme === theme }, theme)
           )
         )
       ),
     ),
   ]
 
-  return {state, render}
+  return { state, render }
 }

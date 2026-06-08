@@ -7,12 +7,12 @@ md.compilers.remark = (() => {
   }
 
   var description = {
-    breaks: 'Exposes newline characters inside paragraphs as breaks',
-    gfm: 'Toggle GFM (GitHub Flavored Markdown)',
-    sanitize: 'Disable HTML tag rendering',
+    breaks: '将段落内的换行符显示为换行',
+    gfm: '切换 GFM（GitHub Flavored Markdown）',
+    sanitize: '禁用 HTML 标签渲染',
   }
 
-  var ctor = ({storage: {state}}) => ({
+  var ctor = ({ storage: { state } }) => ({
     defaults,
     description,
     compile: (markdown) =>
@@ -27,5 +27,5 @@ md.compilers.remark = (() => {
         .value
   })
 
-  return Object.assign(ctor, {defaults, description})
+  return Object.assign(ctor, { defaults, description })
 })()

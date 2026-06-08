@@ -107,6 +107,8 @@ body.dark .m-button {
 
 .m-switch {
   cursor: pointer;
+  display: flex;
+  align-items: center;
   margin: 7px 0;
 }
 .m-switch:first-child {

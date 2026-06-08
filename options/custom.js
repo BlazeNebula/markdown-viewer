@@ -9,7 +9,7 @@ var Custom = () => {
 
   var state = Object.assign({}, defaults)
 
-  chrome.runtime.sendMessage({message: 'custom.get'}, (res) => {
+  chrome.runtime.sendMessage({ message: 'custom.get' }, (res) => {
     Object.assign(state, res)
     m.redraw()
   })
@@ -88,7 +88,7 @@ var Custom = () => {
       m('.row',
         m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
           m('span.m-label',
-            'Custom Theme'
+            '自定义主题'
           )
         ),
         m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
@@ -101,15 +101,15 @@ var Custom = () => {
           m('button.mdc-button mdc-button--raised m-button', {
             oncreate: oncreate.ripple,
             onclick: events.file
-            },
-            !state.theme ? 'Add' : 'Update'
+          },
+            !state.theme ? '添加' : '更新'
           ),
           state.theme &&
           m('button.mdc-button mdc-button--raised m-button', {
             oncreate: oncreate.ripple,
             onclick: events.remove
-            },
-            'Remove'
+          },
+            '移除'
           ),
         ),
       ),
@@ -117,13 +117,13 @@ var Custom = () => {
       m('.row',
         m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
           m('span.m-label',
-            'Color Scheme'
+            '配色方案'
           )
         ),
         m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
           m('select.mdc-elevation--z2 m-select', {
             onchange: events.color
-            },
+          },
             state._colors.map((color) =>
               m('option', {
                 selected: state.color === color,
@@ -135,5 +135,5 @@ var Custom = () => {
     )
   ]
 
-  return {state, render}
+  return { state, render }
 }

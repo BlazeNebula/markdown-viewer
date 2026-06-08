@@ -6,16 +6,16 @@ md.compilers.commonmark = (() => {
   }
 
   var description = {
-    safe: 'Raw HTML will not be rendered',
+    safe: '不渲染原始 HTML',
     smart: [
-      'Straight quotes will be made curly',
-      '-- will be changed to an en dash',
-      '--- will be changed to an em dash',
-      'and ... will be changed to ellipses'
+      '直引号变为弯引号',
+      '-- 变为 en dash',
+      '--- 变为 em dash',
+      '... 变为省略号'
     ].join('\n'),
   }
 
-  var ctor = ({storage: {state}}) => ({
+  var ctor = ({ storage: { state } }) => ({
     defaults,
     description,
     compile: (markdown) => ((
@@ -26,5 +26,5 @@ md.compilers.commonmark = (() => {
     )()
   })
 
-  return Object.assign(ctor, {defaults, description})
+  return Object.assign(ctor, { defaults, description })
 })()

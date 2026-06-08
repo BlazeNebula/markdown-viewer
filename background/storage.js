@@ -47,12 +47,12 @@ md.storage.defaults = (compilers) => {
       width: 'auto',
     },
     content: {
-      autoreload: false,
-      emoji: false,
-      mathjax: false,
-      mermaid: false,
+      autoreload: true,
+      emoji: true,
+      mathjax: true,
+      mermaid: true,
       syntax: true,
-      toc: false,
+      toc: true,
     },
     origins: {
       'file://': {

@@ -11,14 +11,14 @@ md.compilers.remarkable = (() => {
   }
 
   var description = {
-    breaks: 'Convert \\n in paragraphs into <br>',
-    html: 'Enable HTML tags in source',
-    linkify: 'Autoconvert URL-like text to links',
-    typographer: 'Enable some language-neutral replacement + quotes beautification',
-    xhtmlOut: 'Use / to close single tags (<br />)'
+    breaks: '将段落中的 \\n 转换为 <br> 换行',
+    html: '允许在源码中使用 HTML 标签',
+    linkify: '自动将类 URL 文本转换为链接',
+    typographer: '启用语言无关的替换与引号美化',
+    xhtmlOut: '使用 / 关闭单标签 (<br />)'
   }
 
-  var ctor = ({storage: {state}}) => ({
+  var ctor = ({ storage: { state } }) => ({
     defaults,
     description,
     compile: (markdown) =>
@@ -26,5 +26,5 @@ md.compilers.remarkable = (() => {
         .render(markdown)
   })
 
-  return Object.assign(ctor, {defaults, description})
+  return Object.assign(ctor, { defaults, description })
 })()

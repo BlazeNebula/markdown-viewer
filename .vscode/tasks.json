@@ -1,114 +1,114 @@
 {
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "构建扩展 (Chrome)",
-      "type": "shell",
-      "command": ".\\scripts\\构建扩展.ps1 chrome",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "dedicated",
-        "showReuseMessage": false
-      },
-      "problemMatcher": [],
-      "detail": "完整构建 Chrome 扩展：安装 npm 依赖、打包 vendor 库、生成 ZIP"
-    },
-    {
-      "label": "构建扩展 (Firefox)",
-      "type": "shell",
-      "command": ".\\scripts\\构建扩展.ps1 firefox",
-      "group": "build",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "dedicated",
-        "showReuseMessage": false
-      },
-      "problemMatcher": [],
-      "detail": "完整构建 Firefox 扩展：安装 npm 依赖、打包 vendor 库、生成 ZIP"
-    },
-    {
-      "label": "构建单个依赖",
-      "type": "shell",
-      "command": "& \"D:\\Program Files\\Git\\bin\\sh.exe\" -c \"cd build/${input:depName} && sh build.sh 2>&1\"",
-      "group": "build",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "dedicated"
-      },
-      "problemMatcher": [],
-      "detail": "构建单个依赖，如 mermaid、markdown-it、prism 等"
-    },
-    {
-      "label": "清理构建产物",
-      "type": "shell",
-      "command": "Remove-Item -Recurse -Force themes, vendor, dist -ErrorAction SilentlyContinue; Write-Host '已清理 themes/ vendor/ dist/'",
-      "group": "build",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "dedicated"
-      },
-      "problemMatcher": [],
-      "detail": "删除 themes/、vendor/ 和 dist/ 目录"
-    },
-    {
-      "label": "发布 Git 版本",
-      "type": "shell",
-      "command": "${input:releaseScript}",
-      "group": "none",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "dedicated"
-      },
-      "problemMatcher": [],
-      "detail": "提交 → 推送 dev → merge main → tag → 推送 tag"
-    }
-  ],
-  "inputs": [
-    {
-      "id": "depName",
-      "type": "pickString",
-      "description": "选择要构建的依赖",
-      "options": [
-        "bootstrap",
-        "csso",
-        "markdown-it",
-        "marked",
-        "mathjax",
-        "mdc",
-        "mermaid",
-        "mithril",
-        "panzoom",
-        "prism",
-        "remark",
-        "themes"
-      ],
-      "default": "mermaid"
-    },
-    {
-      "id": "releaseScript",
-      "type": "pickString",
-      "description": "选择发布方式",
-      "options": [
+    "version": "2.0.0",
+    "tasks": [
         {
-          "label": "v5.7 (快速发布)",
-          "detail": "提交当前更改 → 推送 → 合并 → tag → GitHub Release",
-          "value": "Write-Host '请在终端手动执行: .\\scripts\\构建扩展.ps1 chrome'"
+            "label": "构建扩展 (Chrome)",
+            "type": "shell",
+            "command": ".\\scripts\\构建扩展.ps1 chrome",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false
+            },
+            "problemMatcher": [],
+            "detail": "完整构建 Chrome 扩展：安装 npm 依赖、打包 vendor 库、生成 ZIP"
+        },
+        {
+            "label": "构建扩展 (Firefox)",
+            "type": "shell",
+            "command": ".\\scripts\\构建扩展.ps1 firefox",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false
+            },
+            "problemMatcher": [],
+            "detail": "完整构建 Firefox 扩展：安装 npm 依赖、打包 vendor 库、生成 ZIP"
+        },
+        {
+            "label": "构建单个依赖",
+            "type": "shell",
+            "command": "& \"D:\\Program Files\\Git\\bin\\sh.exe\" -c \"cd build/${input:depName} && sh build.sh 2>&1\"",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "problemMatcher": [],
+            "detail": "构建单个依赖，如 mermaid、markdown-it、prism 等"
+        },
+        {
+            "label": "清理构建产物",
+            "type": "shell",
+            "command": "Remove-Item -Recurse -Force themes, vendor, dist -ErrorAction SilentlyContinue; Write-Host '已清理 themes/ vendor/ dist/'",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "problemMatcher": [],
+            "detail": "删除 themes/、vendor/ 和 dist/ 目录"
+        },
+        {
+            "label": "发布 Git 版本",
+            "type": "shell",
+            "command": "${input:releaseScript}",
+            "group": "none",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "problemMatcher": [],
+            "detail": "提交 → 推送 dev → merge main → tag → 推送 tag"
         }
-      ]
-    }
-  ]
+    ],
+    "inputs": [
+        {
+            "id": "depName",
+            "type": "pickString",
+            "description": "选择要构建的依赖",
+            "options": [
+                "bootstrap",
+                "csso",
+                "markdown-it",
+                "marked",
+                "mathjax",
+                "mdc",
+                "mermaid",
+                "mithril",
+                "panzoom",
+                "prism",
+                "remark",
+                "themes"
+            ],
+            "default": "mermaid"
+        },
+        {
+            "id": "releaseScript",
+            "type": "pickString",
+            "description": "选择发布方式",
+            "options": [
+                {
+                    "label": "v5.7 (快速发布)",
+                    "detail": "提交当前更改 → 推送 → 合并 → tag → GitHub Release",
+                    "value": "Write-Host '请在终端手动执行: .\\scripts\\构建扩展.ps1 chrome'"
+                }
+            ]
+        }
+    ]
 }

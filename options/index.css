@@ -152,7 +152,8 @@ footer, #footer-push {
 /*switch*/
 .m-switch {
   cursor: pointer;
-  /*display: table;*/
+  display: flex;
+  align-items: center;
   margin: 14px 0;
 }
 .m-switch .mdc-switch__background {
@@ -239,6 +240,41 @@ h4 {
 
 .m-btn-refresh {
   float: right;
+}
+
+/* 输入框与同行按钮紧凑排列 */
+.m-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.m-input-row .mdc-text-field.m-textfield {
+  flex: 1;
+  min-width: 0;
+  margin-left: 0;
+}
+.m-input-row .m-btn-add {
+  float: none;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* 强制所有文本输入框撑满宽度 */
+.m-textfield {
+  width: 100% !important;
+  display: block;
+  box-sizing: border-box;
+}
+.m-textfield input.mdc-text-field__input {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* 路径匹配正则输入框 */
+.overflow .m-textfield {
+  width: 100% !important;
+  display: block;
+  margin-left: 0;
 }
 
 /*---------------------------------------------------------------------------*/

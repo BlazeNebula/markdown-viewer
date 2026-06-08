@@ -21,9 +21,9 @@ var Origins = () => {
     m.redraw()
   })
 
-  chrome.runtime.sendMessage({message: 'options.origins'}, (res) => {
-    Object.assign(state, {file: state.file}, res)
-    chrome.permissions.getAll(({origins}) => {
+  chrome.runtime.sendMessage({ message: 'options.origins' }, (res) => {
+    Object.assign(state, { file: state.file }, res)
+    chrome.permissions.getAll(({ origins }) => {
       state.permissions = origins.reduce((all, origin) =>
         (all[origin.replace(/(.*)\/\*$/, '$1')] = true, all), {})
       m.redraw()
@@ -32,7 +32,7 @@ var Origins = () => {
 
   var events = {
     file: () => {
-      chrome.tabs.create({url: `chrome://extensions/?id=${chrome.runtime.id}`})
+      chrome.tabs.create({ url: `chrome://extensions/?id=${chrome.runtime.id}` })
     },
 
     host: (e) => {
@@ -49,9 +49,9 @@ var Origins = () => {
       if (/Firefox/.test(navigator.userAgent) && /:\d{2,4}/.test(origin)) {
         origin = origin.replace(/(:\d{2,4})/, '')
       }
-      chrome.permissions.request({origins: [`${origin}/*`]}, (granted) => {
+      chrome.permissions.request({ origins: [`${origin}/*`] }, (granted) => {
         if (granted) {
-          chrome.runtime.sendMessage({message: 'origin.add', origin})
+          chrome.runtime.sendMessage({ message: 'origin.add', origin })
           state.origins[origin] = {
             header: true,
             path: true,
@@ -65,9 +65,9 @@ var Origins = () => {
     },
 
     remove: (origin) => () => {
-      chrome.permissions.remove({origins: [`${origin}/*`]}, (removed) => {
+      chrome.permissions.remove({ origins: [`${origin}/*`] }, (removed) => {
         if (removed) {
-          chrome.runtime.sendMessage({message: 'origin.remove', origin})
+          chrome.runtime.sendMessage({ message: 'origin.remove', origin })
           delete state.origins[origin]
           delete state.permissions[origin]
           m.redraw()
@@ -76,7 +76,7 @@ var Origins = () => {
     },
 
     refresh: (origin) => () => {
-      chrome.permissions.request({origins: [`${origin}/*`]}, (granted) => {
+      chrome.permissions.request({ origins: [`${origin}/*`] }, (granted) => {
         if (granted) {
           state.permissions[origin] = true
           m.redraw()
@@ -86,21 +86,21 @@ var Origins = () => {
 
     header: (origin) => () => {
       state.origins[origin].header = !state.origins[origin].header
-      var {header, path, match} = state.origins[origin]
+      var { header, path, match } = state.origins[origin]
       chrome.runtime.sendMessage({
         message: 'origin.update',
         origin,
-        options: {header, path, match},
+        options: { header, path, match },
       })
     },
 
     path: (origin) => () => {
       state.origins[origin].path = !state.origins[origin].path
-      var {header, path, match} = state.origins[origin]
+      var { header, path, match } = state.origins[origin]
       chrome.runtime.sendMessage({
         message: 'origin.update',
         origin,
-        options: {header, path, match},
+        options: { header, path, match },
       })
     },
 
@@ -108,11 +108,11 @@ var Origins = () => {
       state.origins[origin].match = e.target.value
       clearTimeout(state.timeout)
       state.timeout = setTimeout(() => {
-        var {header, path, match} = state.origins[origin]
+        var { header, path, match } = state.origins[origin]
         chrome.runtime.sendMessage({
           message: 'origin.update',
           origin,
-          options: {header, path, match},
+          options: { header, path, match },
         })
       }, 750)
     },
@@ -146,7 +146,7 @@ var Origins = () => {
       // file access
       m('.row',
         m('.col-xxl-10.col-xl-10.col-lg-9.col-md-8.col-sm-12',
-          m('h3', 'File Access'),
+          m('h3', '文件访问'),
         ),
         m('.col-xxl-2.col-xl-2.col-lg-3.col-md-4.col-sm-12',
           // file access is disabled
@@ -154,8 +154,8 @@ var Origins = () => {
           m('button.mdc-button mdc-button--raised m-button m-btn-file', {
             oncreate: oncreate.ripple,
             onclick: events.file
-            },
-            'Allow Access'
+          },
+            '允许访问'
           )
         ),
       ),
@@ -166,42 +166,42 @@ var Origins = () => {
       // site access
       m('.row',
         m('.col-xxl-10.col-xl-10.col-lg-10.col-md-9.col-sm-8',
-          m('h3', 'Site Access'),
+          m('h3', '站点访问'),
         ),
         (!Object.keys(state.origins).includes('*://*') || null) &&
         m('.col-xxl-2.col-xl-2.col-lg-2.col-md-3.col-sm-4',
           m('button.mdc-button mdc-button--raised m-button m-btn-all', {
             oncreate: oncreate.ripple,
             onclick: events.add(true)
-            },
-            'Allow All'
+          },
+            '全部允许'
           ),
         ),
       ),
 
       // add origin
-      m('.bs-callout m-box-add',
+      m('.bs-callout.m-box-add',
         m('.row',
-          m('.col-xxl-11.col-xl-11.col-lg-10.col-md-10.col-sm-12',
-            m('.mdc-text-field m-textfield', {
-              oncreate: oncreate.textfield,
+          m('.col-sm-12',
+            m('.m-input-row',
+              m('.mdc-text-field.m-textfield', {
+                oncreate: oncreate.textfield,
               },
-              m('input.mdc-text-field__input', {
-                type: 'text',
-                value: state.host,
-                onchange: events.host,
-                placeholder: 'Copy/paste URL address here'
-              }),
-              m('.mdc-line-ripple')
-            ),
-          ),
-          m('.col-xxl-1.col-xl-1.col-lg-2.col-md-2.col-sm-12',
-            m('button.mdc-button mdc-button--raised m-button m-btn-add', {
-              oncreate: oncreate.ripple,
-              onclick: events.add()
+                m('input.mdc-text-field__input', {
+                  type: 'text',
+                  value: state.host,
+                  onchange: events.host,
+                  placeholder: '在此粘贴网址'
+                }),
+                m('.mdc-line-ripple')
+              ),
+              m('button.mdc-button mdc-button--raised m-button m-btn-add', {
+                oncreate: oncreate.ripple,
+                onclick: events.add()
               },
-              'Add'
-            ),
+                '添加'
+              ),
+            )
           )
         )
       ),
@@ -214,7 +214,7 @@ var Origins = () => {
     )
 
   var callout = (origin) =>
-    m('.bs-callout', {class: !state.permissions[origin] ? 'm-box-refresh' : undefined},
+    m('.bs-callout', { class: !state.permissions[origin] ? 'm-box-refresh' : undefined },
       // origin
       m('.row',
         m('.col-xxl-8.col-xl-8.col-lg-8.col-md-7.col-sm-12 m-overflow', m('span.m-origin', origin)),
@@ -224,16 +224,16 @@ var Origins = () => {
           m('button.mdc-button mdc-button--raised m-button m-btn-remove', {
             oncreate: oncreate.ripple,
             onclick: events.remove(origin)
-            },
-            'Remove'
+          },
+            '移除'
           ),
           // refresh
           (!state.permissions[origin] || null) &&
           m('button.mdc-button mdc-button--raised m-button m-btn-refresh', {
             oncreate: oncreate.ripple,
             onclick: events.refresh(origin)
-            },
-            'Refresh'
+          },
+            '刷新'
           )
         )
       ),
@@ -241,10 +241,10 @@ var Origins = () => {
       m('.row',
         m('.col-sm-12',
           m('.overflow',
-            m('label.mdc-switch m-switch', {
+            m('label.mdc-switch.m-switch', {
               onupdate: onupdate.header,
-              title: 'Toggle Header Detection'
-              },
+              title: '切换头部检测'
+            },
               m('input.mdc-switch__native-control', {
                 type: 'checkbox',
                 checked: state.origins[origin].header,
@@ -252,7 +252,7 @@ var Origins = () => {
               }),
               m('.mdc-switch__background', m('.mdc-switch__knob')),
               m('span.mdc-switch-label',
-                'Content Type Detection: ',
+                '内容类型检测：',
                 m('span', 'text/markdown'),
                 ', ',
                 m('span', 'text/x-markdown'),
@@ -267,10 +267,10 @@ var Origins = () => {
       m('.row',
         m('.col-sm-12',
           m('.overflow',
-            m('label.mdc-switch m-switch', {
+            m('label.mdc-switch.m-switch', {
               onupdate: onupdate.path,
-              title: 'Toggle Path Detection'
-              },
+              title: '切换路径匹配'
+            },
               m('input.mdc-switch__native-control', {
                 type: 'checkbox',
                 checked: state.origins[origin].path,
@@ -278,12 +278,12 @@ var Origins = () => {
               }),
               m('.mdc-switch__background', m('.mdc-switch__knob')),
               m('span.mdc-switch-label',
-                'Path Matching RegExp: '
+                '路径匹配正则：'
               )
             ),
-            m('.mdc-text-field m-textfield', {
+            m('.mdc-text-field.m-textfield', {
               oncreate: oncreate.textfield
-              },
+            },
               m('input.mdc-text-field__input', {
                 type: 'text',
                 onkeyup: events.match(origin),
@@ -296,5 +296,5 @@ var Origins = () => {
       )
     )
 
-  return {state, render}
+  return { state, render }
 }
