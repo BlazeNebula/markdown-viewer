@@ -71,19 +71,23 @@ var mmd = (() => {
 
   return {
     render: () => {
-      if (loaded) {
-        var definitions = walk(/<pre><code class="mermaid">([\s\S]+?)<\/code><\/pre>/gi, state.html)
+      // 每次渲染前，将 code.mermaid 中的 HTML 实体解码为原始字符
+      // （markdown 编译器会把 <br> 转义为 &lt;br&gt;，Mermaid 内部
+      //  的 entityDecode 在 content script 中不可靠，手动解码确保可靠）
+      Array.from(document.querySelectorAll('pre code.mermaid')).forEach(function (codeEl) {
+        codeEl.innerHTML = codeEl.innerHTML
+          .replace(/&lt;br\s*\/?&gt;/gi, '<br/>')
+          .replace(/&quot;/g, '"')
+          .replace(/&gt;/g, '>')
+          .replace(/&lt;/g, '<')
+          .replace(/&amp;/g, '&')
+      })
 
-        Array.from(document.querySelectorAll('pre code.mermaid')).forEach((diagram, index) => {
-          diagram.removeAttribute('data-processed')
-          diagram.innerHTML = definitions[index]
-        })
-      }
       var theme =
         state._themes[state.theme] === 'dark' ||
           (state._themes[state.theme] === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
           ? 'dark' : 'default'
-      mermaid.initialize({ theme, htmlLabels: true })
+      mermaid.initialize({ theme, htmlLabels: false, securityLevel: 'loose' })
       mermaid.run({ querySelector: 'code.mermaid', suppressErrors: true }).then(() => {
         loaded = true
         initPanzoom()

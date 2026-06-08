@@ -1,22 +1,30 @@
 
 # Change Log
 
+## v5.6 - 2026-06-08
+
+### 修复
+
+- **Mermaid 标签换行终于生效**：切换到 `htmlLabels: false`（SVG 文本模式），
+  Mermaid 通过 `nonMarkdownToLines()` 将 `<br>` / `\n` 分割为 `<tspan>` 元素实现换行
+- **手动解码 HTML 实体**：在 `mermaid.run()` 之前将 `<code>` 内容中的
+  `&lt;br&gt;` 手动替换为 `<br/>`，绕过 Mermaid 内部 `entityDecode()`
+  在 content script 隔离环境中的不可靠行为
+- 升级 `build/markdown-it/` 依赖：markdown-it 13.0.1 → 14.2.0 及所有配套插件到最新版
+
 ## v5.5 - 2026-06-08
 
 ### 新增
+
 - Mermaid 图表缩放控制栏（− / 百分比 / + / ⟲ 重置），每个图表独立浮动工具条
-  - 缩小/放大按钮调用 Panzoom.zoomIn/Out，步进缩放
-  - 实时百分比显示（监听 panzoomchange 事件）
-  - 重置按钮调用 Panzoom.reset() 恢复到初始位置和比例
   - 控制栏放在 mermaid-wrapper 中，避免被 Panzoom 的 overflow:hidden 裁剪
 - 显式设置 Panzoom maxScale: 100（移除默认 400% 上限），minScale: 0.2
-- 启用 Mermaid htmlLabels: true，以支持标签中的 HTML 换行
 
 ### 修复
+
 - 恢复使用 mermaid.run() 替代 mermaid.render() 重构方案，解决整个页面空白的回归问题
-- content/index.css 新增 `.mermaid-controls` / `.mc-btn` / `.mc-level` / `.mermaid-wrapper` 样式
-- content/mermaid.js 重构 `initPanzoom()` 整合控制栏创建
-- 清理 `_check_mermaid*.js` 测试临时文件
+- content/index.css 新增控制栏样式
+- content/mermaid.js 整合控制栏创建
 
 ## v5.4 - 2026-06-08
 
