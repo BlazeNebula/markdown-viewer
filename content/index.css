@@ -359,3 +359,66 @@ img.emojione {
   /* prevent img stretch */
   width: auto;
 }
+
+/*---------------------------------------------------------------------------*/
+/*mermaid controls*/
+
+.mermaid-controls {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 5px;
+  background: rgba(80, 80, 80, 0.7);
+  border-radius: 6px;
+  z-index: 10;
+  line-height: 1;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+pre:has(> code.mermaid) {
+  position: relative;
+}
+.mermaid-wrapper {
+  position: relative;
+  display: block;
+}
+
+.mc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #f0f0f0;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  padding: 0;
+  line-height: 1;
+}
+.mc-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+.mc-btn:active {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.mc-level {
+  min-width: 38px;
+  text-align: center;
+  font-size: 11px;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  color: #f0f0f0;
+  user-select: none;
+}
+
+.mc-reset {
+  font-size: 15px;
+}
