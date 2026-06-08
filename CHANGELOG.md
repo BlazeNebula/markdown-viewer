@@ -1,6 +1,13 @@
 
 # Change Log
 
+## v5.4 - 2026-06-08
+- upgrade mermaid from v10.8.0 to v11.15.0
+- migrate mermaid rendering from deprecated init() to run() API
+- add one-click build script (scripts/构建扩展.ps1)
+- add Copilot customization files (.github/)
+- fix build temp files cleanup
+
 ## v5.3 - 2024-04-30
 - custom theme support
 - syntax highlighted raw markdown view
