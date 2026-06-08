@@ -32,6 +32,7 @@ details summary {
   html body._toc-left { padding-left: 0px !important; }
   html body._toc-right { padding-right: 0px !important; }
   #_toc { display: none; }
+  #_toc-toggle { display: none; }
   /*fix github themes auto*/
   body._theme-github .markdown-body { border: 0; padding: 20px; }
   body._theme-github-dark .markdown-body { border: 0; padding: 20px; }
@@ -126,26 +127,78 @@ pre#_markdown,
 @media (prefers-color-scheme: light) {
   body {
     --toc-delimiter: #e1e4e8;
+    --toc-bg: #fff;
+    --toc-text: #333;
   }
 }
 @media (prefers-color-scheme: dark) {
   body {
     --toc-delimiter: #30363d;
+    --toc-bg: #0d1117;
+    --toc-text: #c9d1d9;
   }
 }
-body {
+
+/* TOC 切换按钮 */
+#_toc-toggle {
+  position: fixed;
+  top: 50%;
+  left: var(--toc-width);
+  transform: translate(0, -100%);
+  z-index: 999;
+  width: 20px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--toc-delimiter);
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  background: var(--toc-bg, #fff);
+  color: var(--toc-text, #333);
+  font-size: 14px;
+  cursor: pointer;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+  transition: transform 0.25s ease, opacity 0.2s;
 }
-body._toc-left { padding-left: 300px !important; }
-body._toc-right { padding-right: 300px !important; }
+#_toc-toggle:hover { opacity: 1; }
+
+/* 收起状态：利用 transform 平移（GPU 加速） */
+body._toc-collapsed #_toc {
+  transform: translateX(-100%);
+}
+body._toc-collapsed #_toc-toggle {
+  transform: translate(calc(-1 * var(--toc-width)), -100%);
+}
+:root {
+  --toc-width: 299px;
+}
+
+/* ① 不改变内容布局排版 → transform 不影响 layout */
+/* ② 平移量 = TOC * markdown宽度 / 视窗宽度（比例适配） */
+/* ③ 不占用横向操作能力 → 无 overflow-x: hidden */
+body._toc-left #_html,
+body._toc-left #_markdown {
+  transform: translateX(calc(var(--toc-width) * var(--md-width) / 100vw));
+  transition: transform 0.25s ease;
+}
+body._toc-left._toc-collapsed #_html,
+body._toc-left._toc-collapsed #_markdown {
+  transform: translateX(0);
+}
+
 #_toc {
   position: fixed;
   top: 0; bottom: 0; left: 0;
-  width: 299px;
+  width: var(--toc-width);
   height: 100%;
   border-right: 1px solid var(--toc-delimiter);
+  background: var(--toc-bg, #fff);
   overflow-y: auto;
   overflow-x: hidden;
+  transition: transform 0.25s ease;
+  z-index: 100;
 }
 #_toc ._ul {
   padding-left: 20px !important;
@@ -165,10 +218,10 @@ body._toc-right { padding-right: 300px !important; }
   padding: 5px 10px !important;
   display: block !important;
 }
-._color-light #_toc {
+body._color-light #_toc {
   border-right: 1px solid #e1e4e8;
 }
-._color-dark #_toc {
+body._color-dark #_toc {
   border-right: 1px solid #30363d;
 }
 

@@ -2,13 +2,13 @@
 // chrome.storage.sync.clear()
 // chrome.permissions.getAll((p) => chrome.permissions.remove({origins: p.origins}))
 
-md.storage = ({compilers}) => {
+md.storage = ({ compilers }) => {
 
   var defaults = md.storage.defaults(compilers)
 
   var state = {}
 
-  async function set (options) {
+  async function set(options) {
     await chrome.storage.sync.set(options)
     Object.assign(state, options)
   }
@@ -32,7 +32,7 @@ md.storage = ({compilers}) => {
     set(state)
   })
 
-  return {defaults, state, set}
+  return { defaults, state, set }
 }
 
 md.storage.defaults = (compilers) => {
@@ -117,7 +117,7 @@ md.storage.migrations = (state) => {
     state.content.mermaid = false
   }
   if (state.themes === undefined || state.themes instanceof Array) {
-    state.themes = {wide: false}
+    state.themes = { wide: false }
   }
   if (typeof state.theme === 'object') {
     state.theme = state.theme.name

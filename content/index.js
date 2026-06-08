@@ -137,7 +137,7 @@ var render = (md) => {
   })
 }
 
-function mount () {
+function mount() {
   $('pre').style.display = 'none'
   var md = $('pre').innerText
   favicon()
@@ -154,16 +154,18 @@ function mount () {
 
         var color =
           state._themes[state.theme] === 'dark' ||
-          (state._themes[state.theme] === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
-          ? 'dark' : 'light'
+            (state._themes[state.theme] === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+            ? 'dark' : 'light'
 
         $('body').classList.remove(...Array.from($('body').classList).filter((name) => /^_theme|_color/.test(name)))
+        $('body').classList.add(`_theme-${state.theme}`, `_color-${color}`)
+
+        // link/style 元素放在 wrapper 之外，避免样式重新计算干扰过渡动画
         dom.push(m('link#_theme', {
           onupdate: onupdate.theme,
           rel: 'stylesheet', type: 'text/css',
           href: state.theme !== 'custom' ? chrome.runtime.getURL(`/themes/${state.theme}.css`) : '',
         }))
-        $('body').classList.add(`_theme-${state.theme}`, `_color-${color}`)
 
         if (state.content.syntax) {
           dom.push(m('link#_prism', {
@@ -176,29 +178,54 @@ function mount () {
           (/github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme') +
           (state.themes.width !== 'auto' ? ` _width-${state.themes.width}` : '')
 
+        // 仅内容本身放入 wrapper，由 margin-left + width 过渡驱动
+        var contentBody
         if (state.raw) {
-          if (state.content.syntax) {
-            dom.push(m('#_markdown', {oncreate: oncreate.html, onupdate: onupdate.html, class: theme},
-              m.trust(`<pre class="language-md"><code class="language-md">${_escape(state.markdown)}</code></pre>`)
-            ))
-          }
-          else {
-            dom.push(m('pre#_markdown', {oncreate: oncreate.html, onupdate: onupdate.html}, state.markdown))
-          }
+          contentBody = state.content.syntax
+            ? m('#_markdown', { oncreate: oncreate.html, onupdate: onupdate.html, class: theme },
+              m.trust(`<pre class="language-md"><code class="language-md">${_escape(state.markdown)}</code></pre>`))
+            : m('pre#_markdown', { oncreate: oncreate.html, onupdate: onupdate.html }, state.markdown)
         }
         else {
-          dom.push(m('#_html', {oncreate: oncreate.html, onupdate: onupdate.html, class: theme},
-            m.trust(state.html)
-          ))
+          contentBody = m('#_html', { oncreate: oncreate.html, onupdate: onupdate.html, class: theme },
+            m.trust(state.html))
         }
 
         if (state.content.toc) {
           dom.push(m('#_toc.tex2jax-ignore', m.trust(state.toc)))
-          state.raw ? $('body').classList.remove('_toc-left') : $('body').classList.add('_toc-left')
-        }
+          dom.push(m('button#_toc-toggle', {
+            title: '切换目录',
+            onclick: function () {
+              document.body.classList.toggle('_toc-collapsed')
+            }
+          }, '\u2630'))
 
-        if (state.theme === 'custom') {
-          dom.push(m('style', {type: 'text/css'}, state.custom.theme))
+          dom.push(contentBody)
+          if (state.theme === 'custom') {
+            dom.push(m('style', { type: 'text/css' }, state.custom.theme))
+          }
+
+          state.raw ? $('body').classList.remove('_toc-left') : $('body').classList.add('_toc-left')
+
+          // 主题 CSS 加载后，将 body 的背景色同步到 TOC
+          setTimeout(function () {
+            var toc = document.querySelector('#_toc')
+            var bg = getComputedStyle(document.body).backgroundColor
+            if (toc && bg && bg !== 'transparent' && bg !== 'rgba(0,0,0,0)') {
+              toc.style.backgroundColor = bg
+            }
+            // 读取 markdown 宽度，设定 CSS 变量用于比例计算
+            var md = document.querySelector('#_html') || document.querySelector('#_markdown')
+            if (md) {
+              document.body.style.setProperty('--md-width', md.offsetWidth + 'px')
+            }
+          }, 150)
+        }
+        else {
+          dom.push(contentBody)
+          if (state.theme === 'custom') {
+            dom.push(m('style', { type: 'text/css' }, state.custom.theme))
+          }
         }
       }
 
@@ -225,11 +252,11 @@ var toc = (() => {
         html,
         ['level', 'id', 'title']
       )
-      .reduce((toc, {id, title, level}) => toc +=
-        '<div class="_ul">'.repeat(level) +
-        '<a href="#' + id + '">' + title.replace(/<a[^>]+>/g, '').replace(/<\/a>/g, '') + '</a>' +
-        '</div>'.repeat(level)
-      , '')
+        .reduce((toc, { id, title, level }) => toc +=
+          '<div class="_ul">'.repeat(level) +
+          '<a href="#' + id + '">' + title.replace(/<a[^>]+>/g, '').replace(/<\/a>/g, '') + '</a>' +
+          '</div>'.repeat(level)
+          , '')
   }
 })()
 
