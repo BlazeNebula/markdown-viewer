@@ -121,6 +121,15 @@ pre#_markdown,
   width: 576px !important;
 }
 
+/* _width-auto — 实时自适应：内容宽度 = 视窗宽度 - 侧边栏可见宽度 */
+._width-auto {
+  width: auto !important;
+  min-width: auto !important;
+  max-width: calc(100vw - var(--toc-visible-width, 0px) - 40px) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
 /*---------------------------------------------------------------------------*/
 /*toc*/
 

@@ -174,9 +174,10 @@ function mount() {
           }))
         }
 
+        var widthClass = state.themes.width === 'auto' ? ' _width-auto' : ` _width-${state.themes.width}`
         var theme =
           (/github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme') +
-          (state.themes.width !== 'auto' ? ` _width-${state.themes.width}` : '')
+          widthClass
 
         // 仅内容本身放入 wrapper，由 margin-left + width 过渡驱动
         var contentBody
@@ -193,10 +194,18 @@ function mount() {
 
         if (state.content.toc) {
           dom.push(m('#_toc.tex2jax-ignore', m.trust(state.toc)))
+          // 更新 TOC 可见宽度 CSS 变量，供 _width-auto 实时自适应
+          var updateTocWidth = function () {
+            var collapsed = document.body.classList.contains('_toc-collapsed')
+            var tocWidth = collapsed ? '0px' : '299px'
+            document.body.style.setProperty('--toc-visible-width', tocWidth)
+          }
+
           dom.push(m('button#_toc-toggle', {
             title: '切换目录',
             onclick: function () {
               document.body.classList.toggle('_toc-collapsed')
+              updateTocWidth()
             }
           }, '\u2630'))
 
@@ -206,6 +215,10 @@ function mount() {
           }
 
           state.raw ? $('body').classList.remove('_toc-left') : $('body').classList.add('_toc-left')
+
+          // 初始计算 + 监听窗口缩放，实时更新 TOC 可见宽度
+          updateTocWidth()
+          window.addEventListener('resize', updateTocWidth)
 
           // 主题 CSS 加载后，将 body 的背景色同步到 TOC
           setTimeout(function () {
