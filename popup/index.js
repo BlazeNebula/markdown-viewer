@@ -135,7 +135,7 @@ var Popup = () => {
       }, () => {
         chrome.runtime.sendMessage({ message: 'popup' }, init)
         localStorage.removeItem('tab')
-        state._tabs.activeTabIndex = 0
+        state.tab = 'theme'
       })
     },
 
@@ -164,71 +164,53 @@ var Popup = () => {
 
   chrome.runtime.sendMessage({ message: 'popup' }, init)
 
-  var oncreate = {
-    ripple: (vnode) => {
-      mdc.ripple.MDCRipple.attachTo(vnode.dom)
-    },
-    tabs: (vnode) => {
-      state._tabs = mdc.tabs.MDCTabBar.attachTo(vnode.dom)
-      setTimeout(() => {
-        state._tabs.activeTabIndex = state.tabs.indexOf(state.tab)
-      }, 250)
-    }
-  }
+  // MDC 已移除，涟漪效果通过 CSS .m-button::after 实现
+  // 标签页通过 Mithril 状态 + CSS class 控制
+  var oncreate = {}
 
-  var onupdate = (tab, key) => (vnode) => {
-    var value = tab === 'compiler' ? state.options[key]
-      : tab === 'content' ? state.content[key]
-        : null
-
-    if (vnode.dom.classList.contains('is-checked') !== value) {
-      vnode.dom.classList.toggle('is-checked')
-    }
-  }
+  // 开关状态由 CSS input:checked 控制，无需额外 DOM 操作
+  var onupdate = () => { }
 
   var render = () =>
     m('#popup',
       // raw
-      m('button.mdc-button mdc-button--raised m-button', {
-        oncreate: oncreate.ripple,
+      m('button.m-button', {
         onclick: events.raw
       },
         (state.raw ? 'Html' : 'Markdown')
       ),
       // defaults
-      m('button.mdc-button mdc-button--raised m-button', {
-        oncreate: oncreate.ripple,
+      m('button.m-button', {
         onclick: events.defaults
       },
         '默认值'
       ),
 
       // tabs
-      m('nav.mdc-tab-bar m-tabs', {
-        oncreate: oncreate.tabs,
+      m('nav.m-tabs', {
         onclick: events.tab
       },
         state.tabs.map((tab) =>
-          m('a.mdc-tab', {
+          m('a.m-tab', {
             href: '#tab-' + tab,
+            class: state.tab === tab ? 'is-active' : ''
           },
             tab
-          )),
-        m('span.mdc-tab-bar__indicator')
+          ))
       ),
       m('.m-panels',
         // theme
         m('.m-panel', {
           class: state.tab === 'theme' ? 'is-active' : ''
         },
-          m('select.mdc-elevation--z2 m-select', {
+          m('select.m-select', {
             onchange: events.theme
           },
             state._themes.map((theme) =>
               m('option', { selected: state.theme === theme }, theme)
             )
           ),
-          m('select.mdc-elevation--z2 m-select', {
+          m('select.m-select', {
             onchange: events.themes
           },
             state._width.map((width) =>
@@ -242,7 +224,7 @@ var Popup = () => {
         m('.m-panel', {
           class: state.tab === 'compiler' ? 'is-active' : ''
         },
-          m('select.mdc-elevation--z2 m-select', {
+          m('select.m-select', {
             onchange: events.compiler.name
           },
             state.compilers.map((name) =>
@@ -258,18 +240,18 @@ var Popup = () => {
             Object.keys(state.options)
               .filter((key) => typeof state.options[key] === 'boolean')
               .map((key) =>
-                m('label.mdc-switch m-switch', {
+                m('label.m-switch', {
                   onupdate: onupdate('compiler', key),
                   title: state.description.compiler[key]
                 },
-                  m('input.mdc-switch__native-control', {
+                  m('input.m-switch-input', {
                     type: 'checkbox',
                     name: key,
                     checked: state.options[key],
                     onchange: events.compiler.options
                   }),
-                  m('.mdc-switch__background', m('.mdc-switch__knob')),
-                  m('span.mdc-switch-label', key)
+                  m('span.m-switch-track'),
+                  m('span.m-switch-label', key)
                 )
               )
           )
@@ -279,26 +261,25 @@ var Popup = () => {
           class: state.tab === 'content' ? 'is-active' : ''
         },
           m('.scroll', Object.keys(state.content).map((key) =>
-            m('label.mdc-switch m-switch', {
+            m('label.m-switch', {
               onupdate: onupdate('content', key),
               title: state.description.content[key]
             },
-              m('input.mdc-switch__native-control', {
+              m('input.m-switch-input', {
                 type: 'checkbox',
                 name: key,
                 checked: state.content[key],
                 onchange: events.content
               }),
-              m('.mdc-switch__background', m('.mdc-switch__knob')),
-              m('span.mdc-switch-label', key)
+              m('span.m-switch-track'),
+              m('span.m-switch-label', key)
             ))
           )
         )
       ),
 
       // advanced options
-      m('button.mdc-button mdc-button--raised m-button', {
-        oncreate: oncreate.ripple,
+      m('button.m-button', {
         onclick: events.advanced
       },
         '高级设置'
@@ -317,7 +298,7 @@ var Popup = () => {
               )
             ),
             m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
-              m('select.mdc-elevation--z2 m-select', {
+              m('select.m-select', {
                 onchange: events.theme
               },
                 state._themes.map((theme) =>
@@ -333,7 +314,7 @@ var Popup = () => {
               )
             ),
             m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
-              m('select.mdc-elevation--z2 m-select', {
+              m('select.m-select', {
                 onchange: events.themes
               },
                 state._width.map((width) =>
@@ -353,7 +334,7 @@ var Popup = () => {
       m('.col-xxl-4.col-xl-4.col-lg-6.col-md-6.col-sm-12',
         m('h3', '编译器'),
         m('.bs-callout.m-compiler',
-          m('select.mdc-elevation--z2 m-select', {
+          m('select.m-select', {
             onchange: events.compiler.name
           },
             state.compilers.map((name) =>
@@ -369,18 +350,17 @@ var Popup = () => {
             Object.keys(state.options)
               .filter((key) => typeof state.options[key] === 'boolean')
               .map((key) =>
-                m('label.mdc-switch m-switch', {
-                  onupdate: onupdate('compiler', key),
+                m('label.m-switch', {
                   title: state.description.compiler[key]
                 },
-                  m('input.mdc-switch__native-control', {
+                  m('input.m-switch-input', {
                     type: 'checkbox',
                     name: key,
                     checked: state.options[key],
                     onchange: events.compiler.options
                   }),
-                  m('.mdc-switch__background', m('.mdc-switch__knob')),
-                  m('span.mdc-switch-label', key)
+                  m('span.m-switch-track'),
+                  m('span.m-switch-label', key)
                 )
               )
           )
@@ -391,18 +371,17 @@ var Popup = () => {
         m('h3', '内容'),
         m('.bs-callout.m-content',
           m('.scroll', Object.keys(state.content).map((key) =>
-            m('label.mdc-switch m-switch', {
-              onupdate: onupdate('content', key),
+            m('label.m-switch', {
               title: state.description.content[key]
             },
-              m('input.mdc-switch__native-control', {
+              m('input.m-switch-input', {
                 type: 'checkbox',
                 name: key,
                 checked: state.content[key],
                 onchange: events.content
               }),
-              m('.mdc-switch__background', m('.mdc-switch__knob')),
-              m('span.mdc-switch-label', key)
+              m('span.m-switch-track'),
+              m('span.m-switch-label', key)
             ))
           )
         ),

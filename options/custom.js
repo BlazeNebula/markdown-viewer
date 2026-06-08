@@ -69,11 +69,8 @@ var Custom = () => {
     }
   }
 
-  var oncreate = {
-    ripple: (vnode) => {
-      mdc.ripple.MDCRipple.attachTo(vnode.dom)
-    }
-  }
+  // MDC 已移除，涟漪效果由 CSS .m-button::after 实现
+  var oncreate = {}
 
   var onupdate = {}
 
@@ -98,15 +95,13 @@ var Custom = () => {
             onchange: events.theme,
             oncancel: events.theme,
           }),
-          m('button.mdc-button mdc-button--raised m-button', {
-            oncreate: oncreate.ripple,
+          m('button.m-button', {
             onclick: events.file
           },
             !state.theme ? '添加' : '更新'
           ),
           state.theme &&
-          m('button.mdc-button mdc-button--raised m-button', {
-            oncreate: oncreate.ripple,
+          m('button.m-button', {
             onclick: events.remove
           },
             '移除'
@@ -121,7 +116,7 @@ var Custom = () => {
           )
         ),
         m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
-          m('select.mdc-elevation--z2 m-select', {
+          m('select.m-select', {
             onchange: events.color
           },
             state._colors.map((color) =>

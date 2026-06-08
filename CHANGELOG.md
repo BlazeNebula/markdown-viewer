@@ -1,6 +1,16 @@
 
 # Change Log
 
+## v5.8.1 - 2026-06-09
+
+### 重构
+
+- **移除 MDC（Material Design Components）依赖**：改用 Bootstrap 5.3 + 纯 CSS 替代
+  - 涟漪效果、标签页、开关、文本输入框全部用纯 CSS 实现
+  - 构建速度大幅提升，不再依赖 `node-sass` 原生编译
+- **新增 `scripts/部署依赖.ps1`**：一键部署所有依赖资源的独立脚本
+- **新增 `scripts/构建扩展.ps1`** 替代原有 `build/package.sh`，原生 PowerShell 支持
+
 ## v5.8 - 2026-06-09
 
 ### 新增

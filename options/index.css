@@ -31,7 +31,7 @@ main {
   overflow: hidden;
 }
 
-.mdc-elevation--z2 {
+.m-select {
   box-shadow:
     0 3px 1px -2px rgba(0,0,0,.2),
     0 2px 2px 0 rgba(0,0,0,.14),
@@ -135,49 +135,105 @@ footer, #footer-push {
 }
 
 /*---------------------------------------------------------------------------*/
-/*mdc controls*/
+/* 纯 CSS 控件（替代 MDC）*/
 
 /*button*/
 .m-button {
+  position: relative;
+  overflow: hidden;
   background-color: #ececec !important;
   color: #000 !important;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  line-height: 1.5;
 }
-.m-button:before {
-  background-color: rgba(96, 125, 139, 0.56) !important;
+.m-button:hover {
+  background-color: #dcdcdc !important;
 }
-.m-button:after {
-  background-color: rgba(96, 125, 139, 0.56) !important;
+/* 涟漪效果（纯 CSS 替代 MDC Ripple） */
+.m-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(96, 125, 139, 0.3);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.m-button:active::after {
+  opacity: 1;
+  transition: none;
 }
 
-/*switch*/
+/*switch — 纯 CSS 自定义开关*/
 .m-switch {
   cursor: pointer;
   display: flex;
   align-items: center;
   margin: 14px 0;
 }
-.m-switch .mdc-switch__background {
-  display: inline-block;
-  bottom: 0px;
-  left: 15px;
+.m-switch-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
-.m-switch .mdc-switch-label {
+.m-switch-track {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 14px;
+  background: #ccc;
+  border-radius: 7px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.m-switch-track::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -2px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,.2);
+  transition: left 0.2s;
+}
+.m-switch-input:checked + .m-switch-track {
+  background: #607d8b;
+}
+.m-switch-input:checked + .m-switch-track::after {
+  left: 18px;
+}
+.m-switch-label {
   font-size: 1rem;
   line-height: 1.5rem;
   padding: 0 0 0 30px;
 }
 
-/*textfield*/
+/*textfield — 纯 CSS 输入框*/
 .m-textfield {
-  font-size: 1rem;
-  line-height: 1.5rem;
+  position: relative;
   width: 100%;
-  height: 26px !important;
   margin-left: 10px;
 }
 .m-textfield input {
-  border-bottom: 1px solid #ececec !important;
-  padding-top: 3px;
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #ececec;
+  outline: none;
+  padding: 4px 0;
+  font-size: 1rem;
+  background: transparent;
+  box-sizing: border-box;
+}
+.m-textfield input:focus {
+  border-bottom-color: #607d8b;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -248,7 +304,7 @@ h4 {
   align-items: center;
   gap: 8px;
 }
-.m-input-row .mdc-text-field.m-textfield {
+.m-input-row .m-textfield {
   flex: 1;
   min-width: 0;
   margin-left: 0;
@@ -265,7 +321,7 @@ h4 {
   display: block;
   box-sizing: border-box;
 }
-.m-textfield input.mdc-text-field__input {
+.m-textfield input {
   width: 100% !important;
   box-sizing: border-box;
 }

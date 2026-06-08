@@ -106,18 +106,7 @@ foreach ($dep in $simpleDeps) {
 $ok = Invoke-BuildDep -Name 'themes' -SubDir 'build/themes' -ExtraArg $Browser
 $depResults['themes'] = $ok
 
-# MDC (may fail on Windows due to node-sass native module)
-Write-Host "[BUILD] mdc ..." -ForegroundColor Cyan
-$mdcDir = (Join-Path $ProjectRoot 'build/mdc') -replace '\\', '/'
-$mdcOutput = & $ShPath -c "cd '$mdcDir' && sh build.sh 2>&1 | tail -3"
-if ($LASTEXITCODE -eq 0) {
-    Write-Host "  [OK] mdc" -ForegroundColor Green
-    $depResults['mdc'] = $true
-}
-else {
-    Write-Host "  [SKIP] mdc (node-sass native module not available on Windows, safe to ignore)" -ForegroundColor Yellow
-    $depResults['mdc'] = $false
-}
+# MDC 已移除，改用 Bootstrap 5.3 + 纯 CSS 替代
 
 Write-Host ""
 Write-Host "Build Summary:" -ForegroundColor Yellow

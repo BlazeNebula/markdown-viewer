@@ -118,27 +118,12 @@ var Origins = () => {
     },
   }
 
-  var oncreate = {
-    ripple: (vnode) => {
-      mdc.ripple.MDCRipple.attachTo(vnode.dom)
-    },
-    textfield: (vnode) => {
-      mdc.textfield.MDCTextField.attachTo(vnode.dom)
-    }
-  }
+  // MDC 已移除，涟漪效果由 CSS .m-button::after 实现
+  // 文本输入框样式由纯 CSS 控制
+  var oncreate = {}
 
-  var onupdate = {
-    header: (origin) => (vnode) => {
-      if (vnode.dom.classList.contains('is-checked') !== state.origins[origin].header) {
-        vnode.dom.classList.toggle('is-checked')
-      }
-    },
-    path: (origin) => (vnode) => {
-      if (vnode.dom.classList.contains('is-checked') !== state.origins[origin].path) {
-        vnode.dom.classList.toggle('is-checked')
-      }
-    }
-  }
+  // 开关状态由 CSS input:checked 控制，无需额外 DOM 操作
+  var onupdate = {}
 
   var render = () =>
     m('.m-origins',
@@ -151,8 +136,7 @@ var Origins = () => {
         m('.col-xxl-2.col-xl-2.col-lg-3.col-md-4.col-sm-12',
           // file access is disabled
           (!state.file || null) &&
-          m('button.mdc-button mdc-button--raised m-button m-btn-file', {
-            oncreate: oncreate.ripple,
+          m('button.m-button m-btn-file', {
             onclick: events.file
           },
             '允许访问'
@@ -170,8 +154,7 @@ var Origins = () => {
         ),
         (!Object.keys(state.origins).includes('*://*') || null) &&
         m('.col-xxl-2.col-xl-2.col-lg-2.col-md-3.col-sm-4',
-          m('button.mdc-button mdc-button--raised m-button m-btn-all', {
-            oncreate: oncreate.ripple,
+          m('button.m-button m-btn-all', {
             onclick: events.add(true)
           },
             '全部允许'
@@ -184,19 +167,15 @@ var Origins = () => {
         m('.row',
           m('.col-sm-12',
             m('.m-input-row',
-              m('.mdc-text-field.m-textfield', {
-                oncreate: oncreate.textfield,
-              },
-                m('input.mdc-text-field__input', {
+              m('.m-textfield',
+                m('input', {
                   type: 'text',
                   value: state.host,
                   onchange: events.host,
                   placeholder: '在此粘贴网址'
-                }),
-                m('.mdc-line-ripple')
+                })
               ),
-              m('button.mdc-button mdc-button--raised m-button m-btn-add', {
-                oncreate: oncreate.ripple,
+              m('button.m-button m-btn-add', {
                 onclick: events.add()
               },
                 '添加'
@@ -221,16 +200,14 @@ var Origins = () => {
         m('.col-xxl-4.col-xl-4.col-lg-4.col-md-5.col-sm-12',
           // remove
           (origin !== 'file://' || null) &&
-          m('button.mdc-button mdc-button--raised m-button m-btn-remove', {
-            oncreate: oncreate.ripple,
+          m('button.m-button m-btn-remove', {
             onclick: events.remove(origin)
           },
             '移除'
           ),
           // refresh
           (!state.permissions[origin] || null) &&
-          m('button.mdc-button mdc-button--raised m-button m-btn-refresh', {
-            oncreate: oncreate.ripple,
+          m('button.m-button m-btn-refresh', {
             onclick: events.refresh(origin)
           },
             '刷新'
@@ -241,17 +218,16 @@ var Origins = () => {
       m('.row',
         m('.col-sm-12',
           m('.overflow',
-            m('label.mdc-switch.m-switch', {
-              onupdate: onupdate.header,
+            m('label.m-switch', {
               title: '切换头部检测'
             },
-              m('input.mdc-switch__native-control', {
+              m('input.m-switch-input', {
                 type: 'checkbox',
                 checked: state.origins[origin].header,
                 onchange: events.header(origin)
               }),
-              m('.mdc-switch__background', m('.mdc-switch__knob')),
-              m('span.mdc-switch-label',
+              m('span.m-switch-track'),
+              m('span.m-switch-label',
                 '内容类型检测：',
                 m('span', 'text/markdown'),
                 ', ',
@@ -267,29 +243,25 @@ var Origins = () => {
       m('.row',
         m('.col-sm-12',
           m('.overflow',
-            m('label.mdc-switch.m-switch', {
-              onupdate: onupdate.path,
+            m('label.m-switch', {
               title: '切换路径匹配'
             },
-              m('input.mdc-switch__native-control', {
+              m('input.m-switch-input', {
                 type: 'checkbox',
                 checked: state.origins[origin].path,
                 onchange: events.path(origin)
               }),
-              m('.mdc-switch__background', m('.mdc-switch__knob')),
-              m('span.mdc-switch-label',
+              m('span.m-switch-track'),
+              m('span.m-switch-label',
                 '路径匹配正则：'
               )
             ),
-            m('.mdc-text-field.m-textfield', {
-              oncreate: oncreate.textfield
-            },
-              m('input.mdc-text-field__input', {
+            m('.m-textfield',
+              m('input', {
                 type: 'text',
                 onkeyup: events.match(origin),
                 value: state.origins[origin].match,
-              }),
-              m('.mdc-line-ripple')
+              })
             )
           )
         )

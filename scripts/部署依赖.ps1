@@ -1,19 +1,19 @@
-<#
+﻿<#
 ===========================================================================
- Markdown Viewer — 一键部署所有依赖资源
+ Markdown Viewer 鈥?涓€閿儴缃叉墍鏈変緷璧栬祫婧?
 ===========================================================================
- 功能：根据 build/ 下的各依赖构建脚本，自动完成：
-   1. 安装每个依赖的 npm 包
-   2. 执行构建（打包、压缩、复制）
-   3. 将所有构建产物部署到 vendor/ 和 themes/ 目录
+ 鍔熻兘锛氭牴鎹?build/ 涓嬬殑鍚勪緷璧栨瀯寤鸿剼鏈紝鑷姩瀹屾垚锛?
+   1. 瀹夎姣忎釜渚濊禆鐨?npm 鍖?
+   2. 鎵ц鏋勫缓锛堟墦鍖呫€佸帇缂┿€佸鍒讹級
+   3. 灏嗘墍鏈夋瀯寤轰骇鐗╅儴缃插埌 vendor/ 鍜?themes/ 鐩綍
 
- 用法：
-   .\scripts\部署依赖.ps1            # 部署所有依赖（默认 Chrome）
-   .\scripts\部署依赖.ps1 chrome     # 部署所有依赖（Chrome）
-   .\scripts\部署依赖.ps1 firefox    # 部署所有依赖（Firefox）
+ 鐢ㄦ硶锛?
+   .\scripts\閮ㄧ讲渚濊禆.ps1            # 閮ㄧ讲鎵€鏈変緷璧栵紙榛樿 Chrome锛?
+   .\scripts\閮ㄧ讲渚濊禆.ps1 chrome     # 閮ㄧ讲鎵€鏈変緷璧栵紙Chrome锛?
+   .\scripts\閮ㄧ讲渚濊禆.ps1 firefox    # 閮ㄧ讲鎵€鏈変緷璧栵紙Firefox锛?
 
- 前置条件：
-   - Git Bash（sh.exe）已安装
+ 鍓嶇疆鏉′欢锛?
+   - Git Bash锛坰h.exe锛夊凡瀹夎
    - Node.js >= 18
    - npm >= 10
 
@@ -27,13 +27,13 @@ param(
 
 $ErrorActionPreference = 'Continue'
 
-# ---- 路径解析 ----
+# ---- 璺緞瑙ｆ瀽 ----
 $ProjectRoot = Resolve-Path "$PSScriptRoot/.."
 $BuildRoot = Join-Path $ProjectRoot 'build'
 $VendorDir = Join-Path $ProjectRoot 'vendor'
 $ThemesDir = Join-Path $ProjectRoot 'themes'
 
-# ---- 查找 Git Bash (sh.exe) ----
+# ---- 鏌ユ壘 Git Bash (sh.exe) ----
 $ShCandidates = @(
     "$(Split-Path (Get-Command git -ErrorAction SilentlyContinue).Source)/../bin/sh.exe"
     "$env:ProgramFiles\Git\bin\sh.exe"
@@ -46,7 +46,7 @@ foreach ($c in $ShCandidates) {
     if (Test-Path $c) { $ShPath = $c; break }
 }
 
-# ---- 工具函数：运行单个依赖的 build.sh ----
+# ---- 宸ュ叿鍑芥暟锛氳繍琛屽崟涓緷璧栫殑 build.sh ----
 function Invoke-BuildDep {
     param(
         [string]$Name,
@@ -54,10 +54,10 @@ function Invoke-BuildDep {
         [string]$ExtraArg
     )
     $dir = (Join-Path $BuildRoot $SubDir) -replace '\\', '/'
-    Write-Host "`n[构建] $Name ..." -ForegroundColor Cyan
+    Write-Host "`n[鏋勫缓] $Name ..." -ForegroundColor Cyan
 
     if (-not $ShPath) {
-        Write-Host "  [跳过] 未找到 sh.exe（Git Bash），请安装 Git for Windows" -ForegroundColor Yellow
+        Write-Host "  [璺宠繃] 鏈壘鍒?sh.exe锛圙it Bash锛夛紝璇峰畨瑁?Git for Windows" -ForegroundColor Yellow
         return $false
     }
 
@@ -65,17 +65,17 @@ function Invoke-BuildDep {
     $output = & $ShPath -c $cmd
 
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "  [成功] $Name" -ForegroundColor Green
+        Write-Host "  [鎴愬姛] $Name" -ForegroundColor Green
         return $true
     }
     else {
-        Write-Host "  [失败] $Name" -ForegroundColor Red
+        Write-Host "  [澶辫触] $Name" -ForegroundColor Red
         if ($output) { Write-Host "  $output" -ForegroundColor DarkRed }
         return $false
     }
 }
 
-# ---- 工具函数：直接复制（适用于仅需 npm install + 复制文件的依赖） ----
+# ---- 宸ュ叿鍑芥暟锛氱洿鎺ュ鍒讹紙閫傜敤浜庝粎闇€ npm install + 澶嶅埗鏂囦欢鐨勪緷璧栵級 ----
 function Invoke-CopyDep {
     param(
         [string]$Name,
@@ -83,26 +83,26 @@ function Invoke-CopyDep {
         [scriptblock]$CopyAction
     )
     $dir = Join-Path $BuildRoot $SubDir
-    Write-Host "`n[构建] $Name ..." -ForegroundColor Cyan
+    Write-Host "`n[鏋勫缓] $Name ..." -ForegroundColor Cyan
 
     # npm install
     Push-Location $dir
     try {
         npm ci 2>$null
         if ($LASTEXITCODE -ne 0) { npm i }
-        if ($LASTEXITCODE -ne 0) { throw "npm install 失败" }
+        if ($LASTEXITCODE -ne 0) { throw "npm install 澶辫触" }
 
-        # 执行自定义复制操作
+        # 鎵ц鑷畾涔夊鍒舵搷浣?
         & $CopyAction
-        Write-Host "  [成功] $Name" -ForegroundColor Green
+        Write-Host "  [鎴愬姛] $Name" -ForegroundColor Green
         return $true
     }
     catch {
-        Write-Host "  [失败] $Name : $_" -ForegroundColor Red
+        Write-Host "  [澶辫触] $Name : $_" -ForegroundColor Red
         return $false
     }
     finally {
-        # 清理 node_modules
+        # 娓呯悊 node_modules
         if (Test-Path 'node_modules') {
             Remove-Item -Recurse -Force 'node_modules' -ErrorAction SilentlyContinue
         }
@@ -111,44 +111,44 @@ function Invoke-CopyDep {
 }
 
 # ============================================================
-#  主流程
+#  涓绘祦绋?
 # ============================================================
 Write-Host "==============================================" -ForegroundColor Magenta
-Write-Host " Markdown Viewer — 一键部署所有依赖" -ForegroundColor Magenta
+Write-Host " Markdown Viewer 鈥?涓€閿儴缃叉墍鏈変緷璧? -ForegroundColor Magenta
 Write-Host "==============================================" -ForegroundColor Magenta
-Write-Host " 浏览器 : $Browser" -ForegroundColor White
-Write-Host " 项目根 : $ProjectRoot" -ForegroundColor White
+Write-Host " 娴忚鍣?: $Browser" -ForegroundColor White
+Write-Host " 椤圭洰鏍?: $ProjectRoot" -ForegroundColor White
 Write-Host " Vendor : $VendorDir" -ForegroundColor White
 Write-Host " Themes : $ThemesDir" -ForegroundColor White
 Write-Host "==============================================" -ForegroundColor Magenta
 
 if (-not $ShPath) {
-    Write-Host "`n[错误] 未找到 Git Bash (sh.exe)。请安装 Git for Windows。`n" -ForegroundColor Red
+    Write-Host "`n[閿欒] 鏈壘鍒?Git Bash (sh.exe)銆傝瀹夎 Git for Windows銆俙n" -ForegroundColor Red
     exit 1
 }
-Write-Host "[信息] sh.exe 路径: $ShPath`n"
+Write-Host "[淇℃伅] sh.exe 璺緞: $ShPath`n"
 
 Push-Location $ProjectRoot
 
-# ---- 第 1 步：清理旧的构建产物 ----
-Write-Host "=== 第 1 步：清理旧的构建产物 ===" -ForegroundColor Yellow
+# ---- 绗?1 姝ワ細娓呯悊鏃х殑鏋勫缓浜х墿 ----
+Write-Host "=== 绗?1 姝ワ細娓呯悊鏃х殑鏋勫缓浜х墿 ===" -ForegroundColor Yellow
 foreach ($dir in @($VendorDir, $ThemesDir)) {
     if (Test-Path $dir) {
         Remove-Item -Recurse -Force $dir -ErrorAction SilentlyContinue
-        Write-Host "  [清理] $dir"
+        Write-Host "  [娓呯悊] $dir"
     }
 }
 New-Item -ItemType Directory -Force -Path $VendorDir | Out-Null
 New-Item -ItemType Directory -Force -Path $ThemesDir | Out-Null
-Write-Host "  [完成] vendor/ 和 themes/ 已重置为空目录`n"
+Write-Host "  [瀹屾垚] vendor/ 鍜?themes/ 宸查噸缃负绌虹洰褰昤n"
 
-# ---- 第 2 步：构建所有依赖 ----
-Write-Host "=== 第 2 步：构建所有依赖 ===" -ForegroundColor Yellow
+# ---- 绗?2 姝ワ細鏋勫缓鎵€鏈変緷璧?----
+Write-Host "=== 绗?2 姝ワ細鏋勫缓鎵€鏈変緷璧?===" -ForegroundColor Yellow
 
-$results = @{}   # 记录每个依赖的构建结果
+$results = @{}   # 璁板綍姣忎釜渚濊禆鐨勬瀯寤虹粨鏋?
 
 # ------------------------------
-# 2a. 使用 build.sh 的依赖（通过 Git Bash 运行）
+# 2a. 浣跨敤 build.sh 鐨勪緷璧栵紙閫氳繃 Git Bash 杩愯锛?
 # ------------------------------
 $shBuildDeps = @(
     @{ Name = 'csso'; SubDir = 'csso' }
@@ -168,41 +168,28 @@ foreach ($dep in $shBuildDeps) {
     $results[$dep.Name] = $ok
 }
 
-# themes 需要浏览器参数
+# themes 闇€瑕佹祻瑙堝櫒鍙傛暟
 $ok = Invoke-BuildDep -Name 'themes' -SubDir 'themes' -ExtraArg $Browser
 $results['themes'] = $ok
 
-# ------------------------------
-# 2b. MDC — 特殊处理（node-sass 在 Windows 上可能编译失败）
-# ------------------------------
-Write-Host "`n[构建] mdc ..." -ForegroundColor Cyan
-$mdcDir = (Join-Path $BuildRoot 'mdc') -replace '\\', '/'
-$mdcOutput = & $ShPath -c "cd '$mdcDir' && sh build.sh 2>&1 | tail -5"
-if ($LASTEXITCODE -eq 0 -and (Test-Path (Join-Path $VendorDir 'mdc.min.js'))) {
-    Write-Host "  [成功] mdc" -ForegroundColor Green
-    $results['mdc'] = $true
-}
-else {
-    Write-Host "  [跳过] mdc 构建失败（node-sass 原生模块在 Windows 上不可用，不影响核心功能）" -ForegroundColor Yellow
-    $results['mdc'] = $false
-}
+# MDC 宸茬Щ闄わ紝鏀圭敤 Bootstrap 5.3 + 绾?CSS 鏇夸唬
 
-# ---- 第 3 步：验证构建结果 ----
-Write-Host "`n=== 第 3 步：验证构建结果 ===" -ForegroundColor Yellow
+# ---- 绗?3 姝ワ細楠岃瘉鏋勫缓缁撴灉 ----
+Write-Host "`n=== 绗?3 姝ワ細楠岃瘉鏋勫缓缁撴灉 ===" -ForegroundColor Yellow
 
 $allOk = $true
-Write-Host "`n构建摘要：" -ForegroundColor Yellow
+Write-Host "`n鏋勫缓鎽樿锛? -ForegroundColor Yellow
 foreach ($key in $results.Keys) {
-    $icon = if ($results[$key]) { '✔' } else { '✘' }
+    $icon = if ($results[$key]) { '[OK]' } else { '[--]' }
     $color = if ($results[$key]) { 'Green' } else { 'Red' }
     Write-Host "  $icon $key" -ForegroundColor $color
     if (-not $results[$key]) { $allOk = $false }
 }
 
-# ---- 第 4 步：输出产物清单 ----
-Write-Host "`n=== 第 4 步：产物清单 ===" -ForegroundColor Yellow
+# ---- 绗?4 姝ワ細杈撳嚭浜х墿娓呭崟 ----
+Write-Host "`n=== 绗?4 姝ワ細浜х墿娓呭崟 ===" -ForegroundColor Yellow
 
-# Vendor 目录
+# Vendor 鐩綍
 $vendorFiles = @()
 if (Test-Path $VendorDir) {
     $vendorFiles = Get-ChildItem -Path $VendorDir -Recurse -File | ForEach-Object {
@@ -212,7 +199,7 @@ if (Test-Path $VendorDir) {
     }
 }
 
-# Themes 目录
+# Themes 鐩綍
 $themeFiles = @()
 if (Test-Path $ThemesDir) {
     $themeFiles = Get-ChildItem -Path $ThemesDir -File | ForEach-Object {
@@ -222,12 +209,12 @@ if (Test-Path $ThemesDir) {
     }
 }
 
-Write-Host "`n  Vendor 文件数：$($vendorFiles.Count)" -ForegroundColor White
+Write-Host "`n  Vendor 鏂囦欢鏁帮細$($vendorFiles.Count)" -ForegroundColor White
 if ($vendorFiles.Count -gt 0) {
     $vendorFiles | ForEach-Object { Write-Host "    $($_.Path)  ($($_.Size))" -ForegroundColor Gray }
 }
 
-Write-Host "`n  Themes 文件数：$($themeFiles.Count)" -ForegroundColor White
+Write-Host "`n  Themes 鏂囦欢鏁帮細$($themeFiles.Count)" -ForegroundColor White
 if ($themeFiles.Count -gt 0) {
     $themeFiles | ForEach-Object { Write-Host "    $($_.Path)  ($($_.Size))" -ForegroundColor Gray }
 }
@@ -235,13 +222,14 @@ if ($themeFiles.Count -gt 0) {
 # ============================================================
 Write-Host "`n==============================================" -ForegroundColor Magenta
 if ($allOk) {
-    Write-Host " 全部依赖部署成功！" -ForegroundColor Green
+    Write-Host " 鍏ㄩ儴渚濊禆閮ㄧ讲鎴愬姛锛? -ForegroundColor Green
 }
 else {
-    Write-Host " 部分依赖部署失败，请查看上方详情。" -ForegroundColor Yellow
-    Write-Host " 提示：某些依赖（如 mdc）在 Windows 上可能受限，不影响扩展核心功能。" -ForegroundColor Gray
+    Write-Host " 閮ㄥ垎渚濊禆閮ㄧ讲澶辫触锛岃鏌ョ湅涓婃柟璇︽儏銆? -ForegroundColor Yellow
+    Write-Host " 鎻愮ず锛氳鎯呰鏌ョ湅涓婃柟鏃ュ織銆侻DC 宸蹭粠椤圭洰涓Щ闄わ紝鏀圭敤 Bootstrap 5.3 + 绾?CSS 鏇夸唬銆? -ForegroundColor Gray
 }
 Write-Host "==============================================" -ForegroundColor Magenta
 Write-Host ""
 
 Pop-Location
+

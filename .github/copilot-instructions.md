@@ -31,8 +31,8 @@ content/             # Content Script（注入到 Markdown 页面）
   ├── mathjax.js     # MathJax v3 配置
   ├── mermaid.js     # Mermaid 图表渲染
   └── prism.js       # Prism 代码高亮（动态加载语言）
-options/             # 设置页面（Mithril + MDC + Bootstrap）
-popup/               # 扩展弹窗（Mithril + MDC）
+options/             # 设置页面（Mithril + Bootstrap）
+popup/               # 扩展弹窗（Mithril）
 icons/               # 扩展图标（default/light/dark）
 build/               # 构建系统（各依赖的打包脚本）
 vendor/              # 构建产物：第三方库（gitignored）
@@ -54,7 +54,7 @@ sh build/marked/build.sh
 sh build/remark/build.sh
 sh build/prism/build.sh   # Prism 语法高亮 + autoloader
 sh build/mermaid/build.sh # Mermaid 图表 + CSP 修复
-sh build/mdc/build.sh     # Material Design Components
+# MDC 已移除，改用 Bootstrap 5.3 + 纯 CSS 替代
 sh build/themes/build.sh  # CSS 主题
 ```
 
@@ -66,22 +66,22 @@ sh build/themes/build.sh  # CSS 主题
 
 ```javascript
 // background/storage.js 示例
-var md = md || {}
-md.storage = function(md) {
-  var state = {}
-  return { defaults, state, set }
-}
+var md = md || {};
+md.storage = function (md) {
+  var state = {};
+  return { defaults, state, set };
+};
 ```
 
 ### 命名规则
 
-| 用途 | 规范 | 示例 |
-|------|------|------|
-| 变量/函数 | camelCase | `getState`, `notifyContent` |
-| 构造函数/类 | PascalCase | 本项目中较少使用 |
-| 常量 | UPPER_SNAKE_CASE | `ACCESSIBLE_URLS` |
-| 文件名 | kebab-case | `markdown-it.js`, `webrequest.js` |
-| 消息类型 | 点分命名空间 | `popup.theme`, `options.settings`, `origin.add` |
+| 用途        | 规范             | 示例                                            |
+| ----------- | ---------------- | ----------------------------------------------- |
+| 变量/函数   | camelCase        | `getState`, `notifyContent`                     |
+| 构造函数/类 | PascalCase       | 本项目中较少使用                                |
+| 常量        | UPPER_SNAKE_CASE | `ACCESSIBLE_URLS`                               |
+| 文件名      | kebab-case       | `markdown-it.js`, `webrequest.js`               |
+| 消息类型    | 点分命名空间     | `popup.theme`, `options.settings`, `origin.add` |
 
 ### 消息通信
 
@@ -114,15 +114,15 @@ md.storage = function(md) {
 
 ### Chrome vs Firefox 差异注意
 
-| 差异点 | Chrome | Firefox |
-|--------|--------|---------|
-| Background 声明 | `service_worker`（单个 JS） | `scripts` 数组（按序加载） |
-| 打包方式 | 文件夹整体 zip | 文件夹内容 zip |
-| 设置页打开方式 | `chrome.runtime.openOptionsPage()` | `chrome.tabs.create(optionsUrl)` |
-| 扩展 ID 前缀 | `chrome-extension://` | `moz-extension://` |
-| 主题锚点图标 CSS URL | `chrome-extension://` | `moz-extension://` |
-| `browser_specific_settings` | 无 | 需要 `gecko.id` |
-| 文件 URL 访问 | 需用户手动开启 | 默认允许 |
+| 差异点                      | Chrome                             | Firefox                          |
+| --------------------------- | ---------------------------------- | -------------------------------- |
+| Background 声明             | `service_worker`（单个 JS）        | `scripts` 数组（按序加载）       |
+| 打包方式                    | 文件夹整体 zip                     | 文件夹内容 zip                   |
+| 设置页打开方式              | `chrome.runtime.openOptionsPage()` | `chrome.tabs.create(optionsUrl)` |
+| 扩展 ID 前缀                | `chrome-extension://`              | `moz-extension://`               |
+| 主题锚点图标 CSS URL        | `chrome-extension://`              | `moz-extension://`               |
+| `browser_specific_settings` | 无                                 | 需要 `gecko.id`                  |
+| 文件 URL 访问               | 需用户手动开启                     | 默认允许                         |
 
 修改涉及浏览器差异的代码时，必须同时在两个 manifest 中做对应变更。
 

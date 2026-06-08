@@ -12,15 +12,21 @@ applyTo: ["content/index.js", "popup/index.js", "options/index.js"]
 使用 Mithril 的闭包组件模式（而非 Class 组件）：
 
 ```javascript
-var Component = function() {
-  var state = {}  // 组件私有状态
+var Component = function () {
+  var state = {}; // 组件私有状态
 
   return {
-    oninit: function(vnode) { /* 初始化逻辑 */ },
-    view: function(vnode) {  /* 返回 vnode 树 */ },
-    onupdate: function(vnode) { /* DOM 更新后执行 */ }
-  }
-}
+    oninit: function (vnode) {
+      /* 初始化逻辑 */
+    },
+    view: function (vnode) {
+      /* 返回 vnode 树 */
+    },
+    onupdate: function (vnode) {
+      /* DOM 更新后执行 */
+    },
+  };
+};
 ```
 
 ### 2. 渲染时序
@@ -40,7 +46,7 @@ var Component = function() {
 
 ### 4. DOM 操作
 
-- Mithril 的 `oncreate` 用于初始化第三方库（如 MDC）
+- Mithril 的 `oncreate` 用于初始化第三方库
 - 避免直接操作 DOM，优先通过 Mithril 的视图层管理
 
 ## 参考

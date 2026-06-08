@@ -27,7 +27,7 @@ sh csso/build.sh
 sh markdown-it/build.sh
 sh marked/build.sh
 sh mathjax/build.sh
-sh mdc/build.sh
+# MDC removed — replaced by Bootstrap 5.3 + pure CSS
 sh mermaid/build.sh
 sh mithril/build.sh
 sh panzoom/build.sh

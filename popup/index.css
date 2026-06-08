@@ -18,15 +18,8 @@ body input {
 }
 body select,
 body button,
-body a.mdc-tab {
+body .m-tab {
   font-family: sans-serif !important;
-}
-
-.mdc-elevation--z2 {
-  box-shadow:
-    0 3px 1px -2px rgba(0,0,0,.2),
-    0 2px 2px 0 rgba(0,0,0,.14),
-    0 1px 5px 0 rgba(0,0,0,.12);
 }
 
 #popup {
@@ -72,14 +65,34 @@ body.dark .m-button {
 #popup button:nth-child(2n+3) { float: right; margin-top: 20px; }
 
 .m-button {
+  position: relative;
+  overflow: hidden;
   background-color: #ececec !important;
   color: #000 !important;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  line-height: 1.5;
 }
-.m-button:before {
-  background-color: rgba(96, 125, 139, 0.56) !important;
+.m-button:hover {
+  background-color: #dcdcdc !important;
 }
-.m-button:after {
-  background-color: rgba(96, 125, 139, 0.56) !important;
+/* 涟漪效果（纯 CSS 替代 MDC Ripple） */
+.m-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(96, 125, 139, 0.3);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.m-button:active::after {
+  opacity: 1;
+  transition: none;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -95,6 +108,10 @@ body.dark .m-button {
   border-radius: 2px;
   cursor: pointer;
   padding: 9px 12px;
+  box-shadow:
+    0 3px 1px -2px rgba(0,0,0,.2),
+    0 2px 2px 0 rgba(0,0,0,.14),
+    0 1px 5px 0 rgba(0,0,0,.12);
 }
 
 #popup .m-select {
@@ -103,7 +120,7 @@ body.dark .m-button {
 }
 
 /*---------------------------------------------------------------------------*/
-/*switch*/
+/*switch — 纯 CSS 自定义开关，替代 MDC Switch*/
 
 .m-switch {
   cursor: pointer;
@@ -117,12 +134,52 @@ body.dark .m-button {
 .m-switch:last-child {
   margin-bottom: 10px;
 }
-.m-switch .mdc-switch__background {
+
+/* 隐藏原生 checkbox */
+.m-switch-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* 开关轨道 */
+.m-switch-track {
+  position: relative;
   display: inline-block;
+  width: 36px;
+  height: 14px;
+  background: #ccc;
+  border-radius: 7px;
+  transition: background 0.2s;
+  flex-shrink: 0;
   bottom: 5px;
   left: 15px;
 }
-.m-switch .mdc-switch-label {
+
+/* 开关滑块 */
+.m-switch-track::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -2px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,.2);
+  transition: left 0.2s;
+}
+
+/* 选中状态 */
+.m-switch-input:checked + .m-switch-track {
+  background: #607d8b;
+}
+.m-switch-input:checked + .m-switch-track::after {
+  left: 18px;
+}
+
+.m-switch-label {
   font-size: 1rem;
   line-height: 1.5rem;
   white-space: nowrap;
@@ -132,7 +189,7 @@ body.dark .m-button {
   padding: 0 0 0 30px;
 }
 
-#popup .m-switch .mdc-switch-label { width: 276px; }
+#popup .m-switch-label { width: 276px; }
 
 /*---------------------------------------------------------------------------*/
 /*tabs*/
@@ -143,7 +200,7 @@ body.dark .m-button {
   margin: 20px 0 0 0;
   display: flex;
 }
-.m-tabs a {
+.m-tab {
   line-height: 36px;
   border-bottom: 1px solid #e0e0e0;
   display: inline-block;
@@ -151,12 +208,16 @@ body.dark .m-button {
   max-width: 33.33%;
   min-width: 33.33%;
   height: 36px;
-  max-height: 36px;
-  min-height: 36px;
   padding: 0;
-  align-content: stretch;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: border-bottom-color 0.2s;
 }
-.m-tabs .mdc-tab-bar__indicator { background: #607d8b; }
+.m-tab.is-active {
+  border-bottom: 2px solid #607d8b;
+}
 
 .m-panels {}
 .m-panel { display: none; }
