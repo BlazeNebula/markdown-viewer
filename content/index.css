@@ -486,22 +486,33 @@ pre:has(> code.mermaid) {
 }
 
 /*---------------------------------------------------------------------------*/
-/*层级虚线 - 简约线：悬停时块级元素左侧显示竖线*/
+/*层级虚线 - 简约线：父级链左侧竖线（border-left 方案）*/
 
+/* 颜色变量 */
 @media (prefers-color-scheme: light) {
-  body { --hierarchy-line: rgba(70, 120, 255, 0.40); }
+  body { --hierarchy-border: rgba(70, 120, 255, 0.50); }
 }
 @media (prefers-color-scheme: dark) {
-  body { --hierarchy-line: rgba(90, 170, 255, 0.48); }
+  body { --hierarchy-border: rgba(90, 170, 255, 0.55); }
 }
-body._color-light { --hierarchy-line: rgba(70, 120, 255, 0.40); }
-body._color-dark  { --hierarchy-line: rgba(90, 170, 255, 0.48); }
+body._color-light { --hierarchy-border: rgba(70, 120, 255, 0.50); }
+body._color-dark  { --hierarchy-border: rgba(90, 170, 255, 0.55); }
 
+/*
+ * 只对自带 padding-left 的容器元素加虚线边框——它们的 border-left
+ * 自然落在 padding 区域（列表符号 · 之前、引用竖线之前），
+ * 不会贴到文字上。
+ *
+ * 不包含 p、h1~h6、li、dd 等无自身 padding 的元素。
+ * 利用 :has() 只匹配「拥有悬停子块元素」的父级。
+ */
+
+/* 整条层级链（父级 + 本级）都显示虚线——box-shadow 外阴影不改变布局 */
 ._hierarchy-line #_html :where(
-  h1, h2, h3, h4, h5, h6, p, ul, ol, li,
-  blockquote, pre, table, dl, dd, hr, figure,
-  address, details, fieldset, main, nav, section
+  ul,ol,li,blockquote,pre,table,dl,dd,figure,
+  p,h1,h2,h3,h4,h5,h6,address,hr,
+  details,main,nav,section
 ):hover {
-  box-shadow: inset 3px 0 0 0 var(--hierarchy-line);
+  box-shadow: -2px 0 0 0 var(--hierarchy-border);
   transition: box-shadow 0.12s ease;
 }
