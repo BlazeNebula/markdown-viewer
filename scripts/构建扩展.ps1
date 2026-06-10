@@ -1,13 +1,13 @@
-ï»¿<#
+<#
 ===========================================================================
  Markdown Viewer Extension Build Script
  Target: Chrome / Firefox Extension
  Output: dist/<browser>/markdown-viewer.zip + dist/<browser>/markdown-viewer/
 
  Usage:
-   .\scripts\æž„å»ºæ‰©å±•.ps1            # Build for Chrome (default)
-   .\scripts\æž„å»ºæ‰©å±•.ps1 chrome     # Build for Chrome
-   .\scripts\æž„å»ºæ‰©å±•.ps1 firefox    # Build for Firefox
+   .\scripts\¹¹½¨À©Õ¹.ps1            # Build for Chrome (default)
+   .\scripts\¹¹½¨À©Õ¹.ps1 chrome     # Build for Chrome
+   .\scripts\¹¹½¨À©Õ¹.ps1 firefox    # Build for Firefox
 
  Prerequisites:
    - Git Bash (sh.exe) installed
@@ -106,7 +106,7 @@ foreach ($dep in $simpleDeps) {
 $ok = Invoke-BuildDep -Name 'themes' -SubDir 'build/themes' -ExtraArg $Browser
 $depResults['themes'] = $ok
 
-# MDC å·²ç§»é™¤ï¼Œæ”¹ç”¨ Bootstrap 5.3 + çº¯ CSS æ›¿ä»£
+# MDC ÒÑÒÆ³ý£¬¸ÄÓÃ Bootstrap 5.3 + ´¿ CSS Ìæ´ú
 
 Write-Host ""
 Write-Host "Build Summary:" -ForegroundColor Yellow
