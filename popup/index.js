@@ -65,7 +65,9 @@ var Popup = () => {
         mathjax: '渲染 MathJax 公式',
         mermaid: 'Mermaid 图表',
         syntax: '代码块语法高亮',
-      }
+        hierarchy: '鼠标悬停时显示块级元素层级虚线',
+      },
+      _hierarchyStyles: ['off', 'line', 'outline', 'guide'],
     },
     settings: {}
   }
@@ -99,6 +101,14 @@ var Popup = () => {
 
     content: (e) => {
       state.content[e.target.name] = !state.content[e.target.name]
+      chrome.runtime.sendMessage({
+        message: 'popup.content',
+        content: state.content,
+      })
+    },
+
+    contentHierarchy: (e) => {
+      state.content.hierarchy = state._hierarchyStyles[e.target.selectedIndex]
       chrome.runtime.sendMessage({
         message: 'popup.content',
         content: state.content,
@@ -260,20 +270,44 @@ var Popup = () => {
         m('.m-panel', {
           class: state.tab === 'content' ? 'is-active' : ''
         },
-          m('.scroll', Object.keys(state.content).map((key) =>
-            m('label.m-switch', {
-              onupdate: onupdate('content', key),
-              title: state.description.content[key]
+          m('.scroll', Object.keys(state.content)
+            .filter((key) => key !== 'hierarchy')
+            .map((key) =>
+              m('label.m-switch', {
+                onupdate: onupdate('content', key),
+                title: state.description.content[key]
+              },
+                m('input.m-switch-input', {
+                  type: 'checkbox',
+                  name: key,
+                  checked: state.content[key],
+                  onchange: events.content
+                }),
+                m('span.m-switch-track'),
+                m('span.m-switch-label', key)
+              ))
+          ),
+          // 层级虚线样式选择
+          m('.m-switch', {
+            title: state.description.content.hierarchy
+          },
+            m('span.m-switch-label', '层级虚线'),
+            m('select.m-select', {
+              onchange: events.contentHierarchy,
+              style: { marginTop: '0', width: '100px' }
             },
-              m('input.m-switch-input', {
-                type: 'checkbox',
-                name: key,
-                checked: state.content[key],
-                onchange: events.content
-              }),
-              m('span.m-switch-track'),
-              m('span.m-switch-label', key)
-            ))
+              state._hierarchyStyles.map((style) =>
+                m('option', {
+                  selected: state.content.hierarchy === style,
+                  value: style,
+                }, ({
+                  off: '关闭',
+                  line: '简约线',
+                  outline: '完整框线',
+                  guide: '层级指引',
+                })[style] || style)
+              )
+            )
           )
         )
       ),
@@ -370,19 +404,44 @@ var Popup = () => {
       m('.col-xxl-4.col-xl-4.col-lg-6.col-md-6.col-sm-12',
         m('h3', '内容'),
         m('.bs-callout.m-content',
-          m('.scroll', Object.keys(state.content).map((key) =>
-            m('label.m-switch', {
-              title: state.description.content[key]
-            },
-              m('input.m-switch-input', {
-                type: 'checkbox',
-                name: key,
-                checked: state.content[key],
-                onchange: events.content
-              }),
-              m('span.m-switch-track'),
-              m('span.m-switch-label', key)
-            ))
+          m('.scroll', Object.keys(state.content)
+            .filter((key) => key !== 'hierarchy')
+            .map((key) =>
+              m('label.m-switch', {
+                title: state.description.content[key]
+              },
+                m('input.m-switch-input', {
+                  type: 'checkbox',
+                  name: key,
+                  checked: state.content[key],
+                  onchange: events.content
+                }),
+                m('span.m-switch-track'),
+                m('span.m-switch-label', key)
+              ))
+          ),
+          // 层级虚线样式选择
+          m('.row',
+            m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
+              m('span.m-label', '层级虚线')
+            ),
+            m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
+              m('select.m-select', {
+                onchange: events.contentHierarchy
+              },
+                state._hierarchyStyles.map((style) =>
+                  m('option', {
+                    selected: state.content.hierarchy === style,
+                    value: style,
+                  }, ({
+                    off: '关闭',
+                    line: '简约线',
+                    outline: '完整框线',
+                    guide: '层级指引',
+                  })[style] || style)
+                )
+              )
+            )
           )
         ),
       ),

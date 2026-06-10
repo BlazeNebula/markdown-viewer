@@ -53,6 +53,7 @@ md.storage.defaults = (compilers) => {
       mermaid: true,
       syntax: true,
       toc: true,
+      hierarchy: 'off',
     },
     origins: {
       'file://': {

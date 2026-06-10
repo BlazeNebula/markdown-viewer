@@ -484,3 +484,57 @@ pre:has(> code.mermaid) {
 .mc-reset {
   font-size: 15px;
 }
+
+/*---------------------------------------------------------------------------*/
+/*层级虚线 - 鼠标悬停时显示块级元素层级结构*/
+
+/* 颜色变量（跟随亮暗色模式） */
+body._color-light {
+  --hierarchy-line: rgba(70, 120, 255, 0.40);
+  --hierarchy-line-faint: rgba(70, 120, 255, 0.08);
+  --hierarchy-outline: rgba(70, 120, 255, 0.25);
+}
+body._color-dark {
+  --hierarchy-line: rgba(90, 170, 255, 0.45);
+  --hierarchy-line-faint: rgba(90, 170, 255, 0.10);
+  --hierarchy-outline: rgba(90, 170, 255, 0.30);
+}
+
+/* ----------------- 简约线：仅左侧竖线 ----------------- */
+._hierarchy-line #_html :where(
+  h1, h2, h3, h4, h5, h6, p, ul, ol, li,
+  blockquote, pre, table, dl, dd, hr, figure,
+  address, details, fieldset, main, nav, section
+):hover {
+  box-shadow: inset 3px 0 0 0 var(--hierarchy-line);
+  transition: box-shadow 0.12s ease;
+}
+
+/* ----------------- 完整框线：虚线轮廓 + 左侧竖线 ----------------- */
+._hierarchy-outline #_html :where(
+  h1, h2, h3, h4, h5, h6, p, ul, ol, li,
+  blockquote, pre, table, dl, dd, hr, figure,
+  address, details, fieldset, main, nav, section
+):hover {
+  outline: 1px dashed var(--hierarchy-outline);
+  outline-offset: -1px;
+  box-shadow: inset 3px 0 0 0 var(--hierarchy-line);
+  transition: box-shadow 0.12s ease, outline 0.12s ease;
+}
+
+/* ----------------- 层级指引：始终可见淡线，悬停高亮 ----------------- */
+._hierarchy-guide #_html :where(
+  h1, h2, h3, h4, h5, h6, p, ul, ol, li,
+  blockquote, pre, table, dl, dd, hr, figure,
+  address, details, fieldset, main, nav, section
+) {
+  box-shadow: inset 3px 0 0 0 var(--hierarchy-line-faint);
+  transition: box-shadow 0.15s ease;
+}
+._hierarchy-guide #_html :where(
+  h1, h2, h3, h4, h5, h6, p, ul, ol, li,
+  blockquote, pre, table, dl, dd, hr, figure,
+  address, details, fieldset, main, nav, section
+):hover {
+  box-shadow: inset 3px 0 0 0 var(--hierarchy-line);
+}
