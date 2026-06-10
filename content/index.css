@@ -507,12 +507,14 @@ body._color-dark  { --hierarchy-border: rgba(90, 170, 255, 0.55); }
  * 利用 :has() 只匹配「拥有悬停子块元素」的父级。
  */
 
-/* 整条层级链（父级 + 本级）都显示虚线——box-shadow 外阴影不改变布局 */
+/* 容器父级——使用 box-shadow 外阴影（负偏移），完全不改变布局 */
 ._hierarchy-line #_html :where(
-  ul,ol,li,blockquote,pre,table,dl,dd,figure,
-  p,h1,h2,h3,h4,h5,h6,address,hr,
+  ul,ol,blockquote,pre,table,dl,figure,
   details,main,nav,section
-):hover {
+):has(> :where(
+  ul,ol,li,blockquote,pre,table,dl,dd,figure,p,h1,h2,h3,h4,h5,h6,
+  details,main,nav,section,address
+):hover) {
   box-shadow: -2px 0 0 0 var(--hierarchy-border);
   transition: box-shadow 0.12s ease;
 }
