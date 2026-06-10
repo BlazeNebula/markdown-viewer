@@ -484,3 +484,24 @@ pre:has(> code.mermaid) {
 .mc-reset {
   font-size: 15px;
 }
+
+/*---------------------------------------------------------------------------*/
+/*层级虚线 - 简约线：悬停时块级元素左侧显示竖线*/
+
+@media (prefers-color-scheme: light) {
+  body { --hierarchy-line: rgba(70, 120, 255, 0.40); }
+}
+@media (prefers-color-scheme: dark) {
+  body { --hierarchy-line: rgba(90, 170, 255, 0.48); }
+}
+body._color-light { --hierarchy-line: rgba(70, 120, 255, 0.40); }
+body._color-dark  { --hierarchy-line: rgba(90, 170, 255, 0.48); }
+
+._hierarchy-line #_html :where(
+  h1, h2, h3, h4, h5, h6, p, ul, ol, li,
+  blockquote, pre, table, dl, dd, hr, figure,
+  address, details, fieldset, main, nav, section
+):hover {
+  box-shadow: inset 3px 0 0 0 var(--hierarchy-line);
+  transition: box-shadow 0.12s ease;
+}

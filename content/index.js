@@ -157,8 +157,8 @@ function mount() {
             (state._themes[state.theme] === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
             ? 'dark' : 'light'
 
-        $('body').classList.remove(...Array.from($('body').classList).filter((name) => /^_theme|_color/.test(name)))
-        $('body').classList.add(`_theme-${state.theme}`, `_color-${color}`)
+        $('body').classList.remove(...Array.from($('body').classList).filter((name) => /^_theme|_color|_hierarchy/.test(name)))
+        $('body').classList.add(`_theme-${state.theme}`, `_color-${color}`, '_hierarchy-line')
 
         // link/style 元素放在 wrapper 之外，避免样式重新计算干扰过渡动画
         dom.push(m('link#_theme', {
