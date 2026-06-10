@@ -96,22 +96,47 @@ description: "发布版本迭代工作流。使用场景：完成功能开发后
 
 使用 GitHub CLI 创建 Release 并附加构建产物：
 
+**重要：发布说明含中文时，必须使用 `--notes-file` 参数——PowerShell 管道会损坏中文编码**
+
 ```powershell
-# Chrome 版本
-gh release create "v<版本号>" "dist/chrome/markdown-viewer.zip" `
+# 1. 从 CHANGELOG.md 提取当前版本发布说明，保存为 UTF-8 无 BOM 文件
+$version = "<版本号>"
+$text = [System.IO.File]::ReadAllText("CHANGELOG.md", [System.Text.Encoding]::UTF8)
+$pattern = "(?ms)^## v$version - .*?(?=^## )"
+$match = [regex]::Match($text, $pattern)
+if ($match.Success) {
+    [System.IO.File]::WriteAllText(
+        "release-notes.md",
+        $match.Value.Trim(),
+        [System.Text.Encoding]::UTF8
+    )
+    Write-Host "OK - 已提取发布说明"
+} else {
+    Write-Host "错误：未在 CHANGELOG.md 中找到 v$version 条目"
+    exit 1
+}
+
+# 2. 创建 Release 并上传 Chrome 构建产物（使用 --notes-file 而非 --notes）
+#    上传时重命名 zip，便于区分浏览器版本
+gh release create "v<版本号>" "dist/chrome/markdown-viewer.zip#markdown-viewer-chrome.zip" `
   --title "v<版本号>" `
-  --notes "$(Get-Content CHANGELOG.md | Select-String -Pattern '^## v<版本号>' -Context 0,50 | % { $_.Context.PostContext } | Select-String -Pattern '^## ' -NotMatch | Out-String)" `
+  --notes-file release-notes.md `
   --target main
 
-# Firefox 版本（可选）
-gh release upload "v<版本号>" "dist/firefox/markdown-viewer.zip" --clobber
+# 3. Firefox 版本（可选）
+gh release upload "v<版本号>" "dist/firefox/markdown-viewer.zip#markdown-viewer-firefox.zip" --clobber
+
+# 4. 清理临时文件
+Remove-Item release-notes.md
 ```
 
 或者打开浏览器创建 Release（如果 `gh` 不可用）：
 
 1. 打开 `https://github.com/simov/markdown-viewer/releases/new?tag=v<版本号>&target=main`
 2. 填写发布说明（从 CHANGELOG.md 复制）
-3. 上传 `dist/chrome/markdown-viewer.zip` 作为附件
+3. 分别上传构建产物，并重命名为易区分的名称：
+   - `dist/chrome/markdown-viewer.zip` → 重命名为 `markdown-viewer-chrome.zip`
+   - `dist/firefox/markdown-viewer.zip` → 重命名为 `markdown-viewer-firefox.zip`
 4. 点击发布
 
 ### 步骤 7：收尾确认
@@ -133,3 +158,8 @@ gh release upload "v<版本号>" "dist/firefox/markdown-viewer.zip" --clobber
 - 构建扩展前确认 `vendor/` 和 `themes/` 目录已存在（首次需先运行完整构建）
 - 如果 `gh` 命令因认证问题失败，引导用户运行 `gh auth login` 登录 GitHub
 - 合并 main 后记得切回 dev 分支继续开发
+- **发布说明中文编码**：`gh release create --notes` 配合 PowerShell 管道传递中文时，会因
+  编码转换（UTF-8 → GBK → UTF-8）导致中文乱码。**必须使用 `--notes-file` 参数**，
+  先用 PowerShell 的 .NET 方法（`[System.IO.File]::ReadAllText` /
+  `[System.Text.Encoding]::UTF8`）将发布说明提取为 UTF-8 无 BOM 文件。
+  详见步骤 6 中的提取命令。
